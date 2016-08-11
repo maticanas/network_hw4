@@ -121,11 +121,18 @@ struct malsite
 int get_mal_site(struct malsite * ms, FILE *fp)
 {
 	int msnum = 0;
+	char BOM;
+	fscanf(fp, "%c", &BOM);
+	fscanf(fp, "%c", &BOM);
+	fscanf(fp, "%c", &BOM);
+
+	printf("automatically removed BOM ef bb bf\nif there is no BOM, you should change get_mal_site() code\n");
+
 
 	while (!feof(fp))
 	{
 		fscanf(fp, "%s\n", ms[msnum].url);
-		printf("%s\n", ms[msnum].url);
+		//printf("%s\n", ms[msnum].url);
 		msnum++;
 	}
 	return msnum;
@@ -136,7 +143,7 @@ bool filter_mal_site(char HTTP_url[MAXURL_LEN], struct malsite * ms, int msnum)
 	int idx;
 	for (idx = 0; idx < msnum; idx++)
 	{
-		if (!strstr(HTTP_url, ms[idx].url))
+		if (strstr(ms[idx].url, HTTP_url))
 		{
 			printf("malsite blocked : %s\n", HTTP_url);
 			return true;
@@ -275,7 +282,7 @@ int __cdecl main(int argc, char **argv)
 
 	fp = fopen("mal_site.txt", "r");
 	//filter and priority set
-	char filter[MAXFILTERLEN] = "ip.DstAddr == 192.168.32.14 or ip.SrcAddr == 192.168.32.14";
+	char filter[MAXFILTERLEN] = "tcp.DstPort == 80 || tcp.DstPort == 443";//"ip.DstAddr == 192.168.32.83 or ip.SrcAddr == 192.168.32.83";
 	priority = 0;
 
 	struct malsite * ms;
@@ -314,7 +321,6 @@ int __cdecl main(int argc, char **argv)
 
 		if (filter_http(packet, ms, msnum))
 		{
-			printf("malsite detected\n");
 			continue;
 		}
 
