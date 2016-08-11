@@ -1,0 +1,2 @@
+﻿  main.cpp
+c:\users\shin\documents\visual studio 2015\projects\netfilter\netfilter\main.cpp(40): fatal error C1083: 포함 파일을 열 수 없습니다. 'windivert.h': No such file or directory
